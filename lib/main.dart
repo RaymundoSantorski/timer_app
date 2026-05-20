@@ -181,10 +181,73 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 )
-              : SizedBox(height: 20),
+              : TextButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Configurar descanso',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.remove, size: 30),
+                                    onPressed: () {
+                                      if (restSeconds <= 1) return;
+                                      setState(() {
+                                        restSeconds--;
+                                      });
+                                    },
+                                  ),
+                                  Text(
+                                    '$restSeconds s',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.add, size: 30),
+                                    onPressed: () {
+                                      setState(() {
+                                        restSeconds++;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: Text('Configurar descanso (${restSeconds}s)'),
+                ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              IconButton(
+                icon: Icon(Icons.remove, size: 30),
+                onPressed: () {
+                  if (totalRounds <= 1) return;
+                  setState(() {
+                    totalRounds--;
+                  });
+                },
+              ),
+              Text(
+                'Round $currentRound/$totalRounds',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
               IconButton(
                 icon: Icon(Icons.add, size: 30),
                 onPressed: () {
@@ -193,19 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 },
               ),
-              IconButton(
-                icon: Icon(Icons.remove, size: 30),
-                onPressed: () {
-                  setState(() {
-                    totalRounds--;
-                  });
-                },
-              ),
             ],
-          ),
-          Text(
-            'Round $currentRound/$totalRounds',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
           WorkTime(workSeconds: remainingSeconds),
           ButtonRow(increment: increment, decrement: decrement),
