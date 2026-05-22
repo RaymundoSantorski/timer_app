@@ -1,6 +1,8 @@
 // Durante 15 días toqué el proyecto, no fue perfecto, pero fue constante.
 
 import 'package:flutter/material.dart';
+import 'package:numeric_selector/numeric_selector.dart';
+import 'package:timer/widgets/time_selector.dart';
 import 'package:vibration/vibration.dart';
 import 'dart:async';
 import 'package:timer/widgets/button_row.dart';
@@ -108,9 +110,13 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Esta función incrementa el numero de segundos de ejercicio en 1,
   ///  se llama cada vez que el botón incrementar es presionado.
   void increment() {
+    setWorkSeconds(workSeconds + 1);
+  }
+
+  void setWorkSeconds(int seconds) {
     setState(() {
-      workSeconds++;
-      remainingSeconds = workSeconds;
+      workSeconds = seconds;
+      remainingSeconds = seconds;
     });
   }
 
@@ -119,10 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Si el numero de segundos es 0, no hace nada.
   void decrement() {
     if (workSeconds == 0) return;
-    setState(() {
-      workSeconds--;
-      remainingSeconds = workSeconds;
-    });
+    setWorkSeconds(workSeconds - 1);
   }
 
   void incrementRound() {
@@ -258,8 +261,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-          WorkTime(workSeconds: remainingSeconds),
-          ButtonRow(increment: increment, decrement: decrement),
+          !isRunning
+              ? TimeSelector(
+                  onValueChanged: setWorkSeconds,
+                  remainingSeconds: remainingSeconds,
+                )
+              : WorkTime(workSeconds: remainingSeconds),
           IconButton(
             icon: Icon(Icons.refresh, size: 30),
             onPressed: resetTimer,

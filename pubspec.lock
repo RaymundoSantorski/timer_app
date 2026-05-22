@@ -224,6 +224,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.17.6"
+  numeric_selector:
+    dependency: "direct main"
+    description:
+      name: numeric_selector
+      sha256: "8697f8f252eecd7329f054c21cd366758c6f63c45f8291c560758e1fb52aa823"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   path:
     dependency: transitive
     description:
