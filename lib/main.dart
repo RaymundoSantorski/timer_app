@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:numeric_selector/numeric_selector.dart';
+import 'package:timer/widgets/runninfab.dart';
+import 'package:timer/widgets/stoppedfab.dart';
 import 'package:timer/widgets/time_selector.dart';
 import 'package:vibration/vibration.dart';
 import 'dart:async';
@@ -45,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int restSeconds = 5;
   bool isResting = false;
   bool isRunning = false;
+  bool isPaused = false;
   int totalRounds = 3;
   int currentRound = 1;
   Timer? timer;
@@ -54,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       workSeconds = 0;
       remainingSeconds = 0;
+      isPaused = false;
       restSeconds = 5;
       isResting = false;
       isRunning = false;
@@ -145,22 +149,37 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: remainingSeconds == 0
-            ? null
-            : () {
+      floatingActionButton: !isRunning
+          ? StoppedFAB(
+              onPressed: () {
                 setState(() {
-                  isRunning = !isRunning;
+                  isRunning = true;
+                  isPaused = false;
                 });
-                if (isRunning) {
-                  startTimer();
-                } else {
-                  stopTimer();
-                }
+                startTimer();
               },
-        disabledElevation: 0.0,
-        child: Icon(isRunning ? Icons.stop : Icons.play_arrow),
-      ),
+            )
+          : RunningFAB(
+              onStopped: () {
+                stopTimer();
+                resetTimer();
+              },
+              onPaused: () {
+                stopTimer();
+                setState(() {
+                  isRunning = false;
+                  isPaused = true;
+                });
+              },
+              onResumed: () {
+                startTimer();
+                setState(() {
+                  isRunning = true;
+                  isPaused = false;
+                });
+              },
+              isRunning: isRunning,
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -172,7 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          isRunning
+          (isRunning | isPaused)
               ? Title(
                   color: Colors.black,
                   child: Text(
@@ -261,16 +280,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-          !isRunning
+          (!isRunning && !isPaused)
               ? TimeSelector(
                   onValueChanged: setWorkSeconds,
-                  remainingSeconds: remainingSeconds,
+                  workSeconds: workSeconds,
                 )
               : WorkTime(workSeconds: remainingSeconds),
-          IconButton(
-            icon: Icon(Icons.refresh, size: 30),
-            onPressed: resetTimer,
-          ),
           SizedBox(height: 100),
         ],
       ),
