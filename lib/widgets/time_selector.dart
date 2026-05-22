@@ -1,18 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:numeric_selector/numeric_selector.dart';
 
-class TimeSelector extends StatelessWidget {
-  final int remainingSeconds;
+class TimeSelector extends StatefulWidget {
+  final int workSeconds;
   final Function(int) onValueChanged;
 
   const TimeSelector({
     super.key,
-    required this.remainingSeconds,
+    required this.workSeconds,
     required this.onValueChanged,
   });
 
   @override
+  State<TimeSelector> createState() => _TimeSelectorState();
+}
+
+class _TimeSelectorState extends State<TimeSelector> {
+  @override
   Widget build(BuildContext context) {
+    int? selectedSeconds = Duration(seconds: widget.workSeconds).inSeconds % 60;
+    int? selectedMinutes = Duration(
+      seconds: widget.workSeconds % 3600,
+    ).inMinutes;
+    int? selectedHours = Duration(seconds: widget.workSeconds).inHours;
+    void setTime(int? seconds, int? minutes, int? hours) {
+      selectedSeconds = seconds ?? selectedSeconds;
+      selectedMinutes = minutes ?? selectedMinutes;
+      selectedHours = hours ?? selectedHours;
+      int totalSeconds =
+          (selectedHours! * 3600) + (selectedMinutes! * 60) + selectedSeconds!;
+      widget.onValueChanged(totalSeconds);
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -22,8 +41,8 @@ class TimeSelector extends StatelessWidget {
               minValue: 0,
               maxValue: 59,
               step: 1,
-              initialValue: 0,
-              onValueChanged: (value) {},
+              initialValue: selectedHours!,
+              onValueChanged: (value) => setTime(null, null, value),
               viewPort: 0.3,
               selectedTextStyle: TextStyle(
                 fontSize: 32,
@@ -46,8 +65,8 @@ class TimeSelector extends StatelessWidget {
               minValue: 0,
               maxValue: 59,
               step: 1,
-              initialValue: 0,
-              onValueChanged: (value) {},
+              initialValue: selectedMinutes!,
+              onValueChanged: (value) => setTime(null, value, null),
               viewPort: 0.3,
               selectedTextStyle: TextStyle(
                 fontSize: 32,
@@ -70,8 +89,8 @@ class TimeSelector extends StatelessWidget {
               minValue: 0,
               maxValue: 59,
               step: 1,
-              initialValue: remainingSeconds,
-              onValueChanged: onValueChanged,
+              initialValue: selectedSeconds!,
+              onValueChanged: (value) => setTime(value, null, null),
               viewPort: 0.3,
               selectedTextStyle: TextStyle(
                 fontSize: 32,
