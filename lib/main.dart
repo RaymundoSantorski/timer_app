@@ -158,6 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
                 startTimer();
               },
+              disabled: workSeconds == 0,
             )
           : RunningFAB(
               onStopped: () {
@@ -220,31 +221,19 @@ class _MyHomePageState extends State<MyHomePage> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.remove, size: 30),
-                                    onPressed: () {
-                                      if (restSeconds <= 1) return;
-                                      setState(() {
-                                        restSeconds--;
-                                      });
-                                    },
-                                  ),
-                                  Text(
-                                    '$restSeconds s',
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.add, size: 30),
-                                    onPressed: () {
-                                      setState(() {
-                                        restSeconds++;
-                                      });
-                                    },
-                                  ),
-                                ],
+                              TimeSelector(
+                                onValueChanged: (value) {
+                                  setState(() {
+                                    restSeconds = value;
+                                  });
+                                },
+                                initialSeconds: restSeconds,
+                              ),
+                              FilledButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('Aceptar'),
                               ),
                             ],
                           ),
@@ -252,38 +241,44 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     );
                   },
-                  child: Text('Configurar descanso (${restSeconds}s)'),
+                  child: Text(
+                    'Configurar descanso (${Duration(seconds: restSeconds).inHours.toString().padLeft(2, '0')}:${(Duration(seconds: restSeconds).inMinutes % 60).toString().padLeft(2, '0')}:${(Duration(seconds: restSeconds).inSeconds % 60).toString().padLeft(2, '0')})',
+                  ),
                 ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                icon: Icon(Icons.remove, size: 30),
-                onPressed: () {
-                  if (totalRounds <= 1) return;
-                  setState(() {
-                    totalRounds--;
-                  });
-                },
-              ),
+              isRunning || isPaused
+                  ? SizedBox.shrink()
+                  : IconButton(
+                      icon: Icon(Icons.remove, size: 30),
+                      onPressed: () {
+                        if (totalRounds <= 1) return;
+                        setState(() {
+                          totalRounds--;
+                        });
+                      },
+                    ),
               Text(
                 'Round $currentRound/$totalRounds',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
-              IconButton(
-                icon: Icon(Icons.add, size: 30),
-                onPressed: () {
-                  setState(() {
-                    totalRounds++;
-                  });
-                },
-              ),
+              isRunning || isPaused
+                  ? SizedBox.shrink()
+                  : IconButton(
+                      icon: Icon(Icons.add, size: 30),
+                      onPressed: () {
+                        setState(() {
+                          totalRounds++;
+                        });
+                      },
+                    ),
             ],
           ),
           (!isRunning && !isPaused)
               ? TimeSelector(
                   onValueChanged: setWorkSeconds,
-                  workSeconds: workSeconds,
+                  initialSeconds: workSeconds,
                 )
               : WorkTime(workSeconds: remainingSeconds),
           SizedBox(height: 100),

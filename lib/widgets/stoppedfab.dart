@@ -1,30 +1,14 @@
 import 'package:flutter/material.dart';
 
-// FloatingActionButton(
-//         onPressed: remainingSeconds == 0
-//             ? null
-//             : () {
-//                 setState(() {
-//                   isRunning = !isRunning;
-//                 });
-//                 if (isRunning) {
-//                   startTimer();
-//                 } else {
-//                   stopTimer();
-//                 }
-//               },
-//         disabledElevation: 0.0,
-//         child: Icon(isRunning ? Icons.stop : Icons.play_arrow),
-//       );
-
 class StoppedFAB extends StatelessWidget {
-  const StoppedFAB({super.key, required this.onPressed});
+  const StoppedFAB({super.key, required this.onPressed, this.disabled = false});
   final VoidCallback onPressed;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      onPressed: onPressed,
+      onPressed: disabled ? null : onPressed,
       disabledElevation: 0.0,
       child: Icon(Icons.play_arrow),
     );

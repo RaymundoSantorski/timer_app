@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:numeric_selector/numeric_selector.dart';
 
 class TimeSelector extends StatefulWidget {
-  final int workSeconds;
+  final int initialSeconds;
   final Function(int) onValueChanged;
 
   const TimeSelector({
     super.key,
-    required this.workSeconds,
+    required this.initialSeconds,
     required this.onValueChanged,
   });
 
@@ -18,11 +18,12 @@ class TimeSelector extends StatefulWidget {
 class _TimeSelectorState extends State<TimeSelector> {
   @override
   Widget build(BuildContext context) {
-    int? selectedSeconds = Duration(seconds: widget.workSeconds).inSeconds % 60;
+    int? selectedSeconds =
+        Duration(seconds: widget.initialSeconds).inSeconds % 60;
     int? selectedMinutes = Duration(
-      seconds: widget.workSeconds % 3600,
+      seconds: widget.initialSeconds % 3600,
     ).inMinutes;
-    int? selectedHours = Duration(seconds: widget.workSeconds).inHours;
+    int? selectedHours = Duration(seconds: widget.initialSeconds).inHours;
     void setTime(int? seconds, int? minutes, int? hours) {
       selectedSeconds = seconds ?? selectedSeconds;
       selectedMinutes = minutes ?? selectedMinutes;
@@ -59,6 +60,7 @@ class _TimeSelectorState extends State<TimeSelector> {
             Text('Hours', style: TextStyle(fontSize: 16, color: Colors.grey)),
           ],
         ),
+        SizedBox(width: 20),
         Column(
           children: [
             VerticalNumericSelector(
@@ -83,6 +85,7 @@ class _TimeSelectorState extends State<TimeSelector> {
             Text('Minutes', style: TextStyle(fontSize: 16, color: Colors.grey)),
           ],
         ),
+        SizedBox(width: 20),
         Column(
           children: [
             VerticalNumericSelector(
