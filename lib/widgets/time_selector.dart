@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:numeric_selector/numeric_selector.dart';
+import 'package:timer/widgets/time_selector_column.dart';
 
 class TimeSelector extends StatefulWidget {
   final int initialSeconds;
@@ -36,79 +36,22 @@ class _TimeSelectorState extends State<TimeSelector> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Column(
-          children: [
-            VerticalNumericSelector(
-              minValue: 0,
-              maxValue: 59,
-              step: 1,
-              initialValue: selectedHours!,
-              onValueChanged: (value) => setTime(null, null, value),
-              viewPort: 0.3,
-              selectedTextStyle: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-              unselectedTextStyle: TextStyle(fontSize: 24, color: Colors.grey),
-              backgroundColor: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              showArrows: false,
-              showLabel: false,
-              enableVibration: true,
-              showSelectedValue: false,
-            ),
-            Text('Hours', style: TextStyle(fontSize: 16, color: Colors.grey)),
-          ],
+        TimeSelectorColumn(
+          initialValue: selectedHours!,
+          label: 'Hours',
+          onValueChanged: (value) => setTime(null, null, value),
         ),
         SizedBox(width: 20),
-        Column(
-          children: [
-            VerticalNumericSelector(
-              minValue: 0,
-              maxValue: 59,
-              step: 1,
-              initialValue: selectedMinutes!,
-              onValueChanged: (value) => setTime(null, value, null),
-              viewPort: 0.3,
-              selectedTextStyle: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-              unselectedTextStyle: TextStyle(fontSize: 24, color: Colors.grey),
-              backgroundColor: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              showArrows: false,
-              showLabel: false,
-              enableVibration: true,
-              showSelectedValue: false,
-            ),
-            Text('Minutes', style: TextStyle(fontSize: 16, color: Colors.grey)),
-          ],
+        TimeSelectorColumn(
+          initialValue: selectedMinutes!,
+          label: 'Minutes',
+          onValueChanged: (value) => setTime(null, value, null),
         ),
         SizedBox(width: 20),
-        Column(
-          children: [
-            VerticalNumericSelector(
-              minValue: 0,
-              maxValue: 59,
-              step: 1,
-              initialValue: selectedSeconds!,
-              onValueChanged: (value) => setTime(value, null, null),
-              viewPort: 0.3,
-              selectedTextStyle: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-              unselectedTextStyle: TextStyle(fontSize: 24, color: Colors.grey),
-              backgroundColor: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              showArrows: false,
-              showLabel: false,
-              enableVibration: true,
-              showSelectedValue: false,
-            ),
-            Text('Seconds', style: TextStyle(fontSize: 16, color: Colors.grey)),
-          ],
+        TimeSelectorColumn(
+          initialValue: selectedSeconds!,
+          label: 'Seconds',
+          onValueChanged: (value) => setTime(value, null, null),
         ),
       ],
     );

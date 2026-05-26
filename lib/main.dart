@@ -1,25 +1,41 @@
 // Durante 15 días toqué el proyecto, no fue perfecto, pero fue constante.
 
 import 'package:flutter/material.dart';
-import 'package:numeric_selector/numeric_selector.dart';
 import 'package:timer/widgets/runninfab.dart';
 import 'package:timer/widgets/stoppedfab.dart';
 import 'package:timer/widgets/time_selector.dart';
 import 'package:vibration/vibration.dart';
 import 'dart:async';
-import 'package:timer/widgets/button_row.dart';
 import 'package:timer/widgets/work_time.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
-  ThemeData get theme => ThemeData(
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-    useMaterial3: true,
+  final lightColorScheme = ColorScheme(
+    primary: Color(0xFF2563EB),
+    onPrimary: Color(0xFFFFFFFF),
+    secondary: Color(0xFFF97316),
+    onSecondary: Color(0xFFFFFFFF),
+    error: Color(0xFFDC2626),
+    onError: Color(0xFFFFFFFF),
+    surface: Color(0xFFFFFFFF),
+    onSurface: Color(0xFF111827),
+    brightness: Brightness.light,
+  );
+  final darkColorScheme = ColorScheme(
+    primary: Color(0xFF60A5FA),
+    onPrimary: Color(0xFF000000),
+    secondary: Color(0xFFFB923C),
+    onSecondary: Color(0xFF000000),
+    error: Color(0xFFF87171),
+    onError: Color(0xFF000000),
+    surface: Color(0xFF111827),
+    onSurface: Color(0xFFF3F4F6),
+    brightness: Brightness.dark,
   );
 
   @override
@@ -27,7 +43,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: theme,
+      theme: ThemeData(colorScheme: lightColorScheme, useMaterial3: true),
+      darkTheme: ThemeData(colorScheme: darkColorScheme, useMaterial3: true),
       home: const MyHomePage(title: 'RepTimer'),
     );
   }
