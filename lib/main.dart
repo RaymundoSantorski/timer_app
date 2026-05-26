@@ -13,9 +13,14 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final lightColorScheme = ColorScheme(
     primary: Color(0xFF2563EB),
     onPrimary: Color(0xFFFFFFFF),
@@ -27,6 +32,7 @@ class MyApp extends StatelessWidget {
     onSurface: Color(0xFF111827),
     brightness: Brightness.light,
   );
+
   final darkColorScheme = ColorScheme(
     primary: Color(0xFF60A5FA),
     onPrimary: Color(0xFF000000),
@@ -39,21 +45,35 @@ class MyApp extends StatelessWidget {
     brightness: Brightness.dark,
   );
 
+  ThemeMode currentMode = ThemeMode.light;
+
   @override
   Widget build(BuildContext context) {
+    void setThemeMode(ThemeMode mode) {
+      setState(() {
+        currentMode = mode;
+      });
+    }
+
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(colorScheme: lightColorScheme, useMaterial3: true),
       darkTheme: ThemeData(colorScheme: darkColorScheme, useMaterial3: true),
-      home: const MyHomePage(title: 'RepTimer'),
+      themeMode: currentMode,
+      home: MyHomePage(title: 'RepTimer', setThemeMode: setThemeMode),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({
+    super.key,
+    required this.title,
+    required this.setThemeMode,
+  });
   final String title;
+  final Function(ThemeMode) setThemeMode;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -69,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int totalRounds = 3;
   int currentRound = 1;
   Timer? timer;
+  bool darkMode = false;
 
   void resetTimer() {
     timer?.cancel();
@@ -188,6 +209,22 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          Switch(
+            value: darkMode,
+            onChanged: (value) {
+              setState(() {
+                darkMode = value;
+              });
+              if (value) {
+                widget.setThemeMode(ThemeMode.dark);
+              } else {
+                widget.setThemeMode(ThemeMode.light);
+              }
+            },
+          ),
+        ],
+        elevation: 0,
         title: Text(
           widget.title,
           style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
