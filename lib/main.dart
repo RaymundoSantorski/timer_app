@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:timer/widgets/runninfab.dart';
+import 'package:timer/widgets/set_rest_label.dart';
 import 'package:timer/widgets/stoppedfab.dart';
 import 'package:timer/widgets/time_selector.dart';
 import 'package:vibration/vibration.dart';
@@ -128,25 +129,11 @@ class _MyHomePageState extends State<MyHomePage> {
     timer?.cancel();
   }
 
-  /// Esta función incrementa el numero de segundos de ejercicio en 1,
-  ///  se llama cada vez que el botón incrementar es presionado.
-  void increment() {
-    setWorkSeconds(workSeconds + 1);
-  }
-
   void setWorkSeconds(int seconds) {
     setState(() {
       workSeconds = seconds;
       remainingSeconds = seconds;
     });
-  }
-
-  /// Esta funcion resta uno al numero de segundos de ejercicio en 1,
-  /// se llama cada vez que el botón decrementar el presionado.
-  /// Si el numero de segundos es 0, no hace nada.
-  void decrement() {
-    if (workSeconds == 0) return;
-    setWorkSeconds(workSeconds - 1);
   }
 
   void incrementRound() {
@@ -217,50 +204,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
-                      color: isResting ? Colors.redAccent : Colors.lightGreen,
+                      color: isResting
+                          ? ColorScheme.of(context).error
+                          : Colors.lightGreen,
                     ),
                   ),
                 )
-              : TextButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          padding: EdgeInsets.all(20),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Configurar descanso',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              TimeSelector(
-                                onValueChanged: (value) {
-                                  setState(() {
-                                    restSeconds = value;
-                                  });
-                                },
-                                initialSeconds: restSeconds,
-                              ),
-                              FilledButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Aceptar'),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
+              : SetRestLabel(
+                  restSeconds: restSeconds,
+                  onRestChanged: (value) {
+                    setState(() {
+                      restSeconds = value;
+                    });
                   },
-                  child: Text(
-                    'Configurar descanso (${Duration(seconds: restSeconds).inHours.toString().padLeft(2, '0')}:${(Duration(seconds: restSeconds).inMinutes % 60).toString().padLeft(2, '0')}:${(Duration(seconds: restSeconds).inSeconds % 60).toString().padLeft(2, '0')})',
-                  ),
                 ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
