@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timer/widgets/time_selector_column.dart';
 
-class TimeSelector extends StatefulWidget {
+class TimeSelector extends StatelessWidget {
   final int initialSeconds;
   final Function(int) onValueChanged;
 
@@ -12,25 +12,17 @@ class TimeSelector extends StatefulWidget {
   });
 
   @override
-  State<TimeSelector> createState() => _TimeSelectorState();
-}
-
-class _TimeSelectorState extends State<TimeSelector> {
-  @override
   Widget build(BuildContext context) {
-    int? selectedSeconds =
-        Duration(seconds: widget.initialSeconds).inSeconds % 60;
-    int? selectedMinutes = Duration(
-      seconds: widget.initialSeconds % 3600,
-    ).inMinutes;
-    int? selectedHours = Duration(seconds: widget.initialSeconds).inHours;
+    int? selectedSeconds = Duration(seconds: initialSeconds).inSeconds % 60;
+    int? selectedMinutes = Duration(seconds: initialSeconds % 3600).inMinutes;
+    int? selectedHours = Duration(seconds: initialSeconds).inHours;
     void setTime(int? seconds, int? minutes, int? hours) {
       selectedSeconds = seconds ?? selectedSeconds;
       selectedMinutes = minutes ?? selectedMinutes;
       selectedHours = hours ?? selectedHours;
       int totalSeconds =
           (selectedHours! * 3600) + (selectedMinutes! * 60) + selectedSeconds!;
-      widget.onValueChanged(totalSeconds);
+      onValueChanged(totalSeconds);
     }
 
     return Row(
