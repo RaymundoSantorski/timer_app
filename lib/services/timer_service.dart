@@ -66,7 +66,6 @@ class TimerService {
     // Clear session from persistent storage
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('timerSession');
-    print('Timer session cleared');
   }
 }
 

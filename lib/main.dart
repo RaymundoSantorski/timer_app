@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:timer/models/timer_session.dart';
+import 'package:timer/services/audio_service.dart';
 import 'package:timer/services/notification_service.dart';
 import 'package:timer/services/timer_service.dart';
 import 'package:timer/widgets/runninfab.dart';
@@ -100,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
   SharedPreferences? prefs;
   bool selectorVersion = false;
   TimerSession? session;
+  bool? previousIsResting;
 
   @override
   void initState() {
@@ -139,6 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
         TimerState state = calculateState(session!);
         isRunning = state.isRunning;
         isResting = state.isResting;
+        previousIsResting = state.isResting;
         currentRound = state.currentRound;
         remainingSeconds = state.remainingSeconds;
         isPaused = state.isPaused;
@@ -179,6 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void pauseTimer() {
+    NotificationService.cancelAll();
     if (session != null) {
       timer?.cancel();
       setState(() {
@@ -199,8 +203,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void resetTimer() {
+    NotificationService.cancelAll();
     timer?.cancel();
     TimerService.clear();
+    previousIsResting = null;
     setState(() {
       workSeconds = prefs?.getInt('workSeconds') ?? 60;
       remainingSeconds = workSeconds;
@@ -214,8 +220,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void startTimer() {
-    if (session == null || calculateState(session!).isFinished) {
+  Future<void> startTimer() async {
+    if (session == null) {
       session = TimerSession(
         startTime: DateTime.now(),
         workSeconds: workSeconds,
@@ -236,11 +242,14 @@ class _MyHomePageState extends State<MyHomePage> {
         elapsedBeforePause: elapsedBeforePause,
       );
     }
+    await NotificationService.scheduleSession(session!);
     TimerService.save(session!);
     setState(() {
       isRunning = true;
       isPaused = false;
     });
+    previousIsResting = calculateState(session!).isResting;
+    timer?.cancel();
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (session == null) {
         timer.cancel();
@@ -248,16 +257,26 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       final state = calculateState(session!);
       if (state.isFinished) {
-        resetTimer();
-      } else {
-        setState(() {
-          isRunning = state.isRunning;
-          isResting = state.isResting;
-          isPaused = state.isPaused;
-          currentRound = state.currentRound;
-          remainingSeconds = state.remainingSeconds;
-        });
+        AudioService.playCompletedAudio();
+        Future.delayed(const Duration(milliseconds: 200), resetTimer);
+        return;
       }
+      if (previousIsResting != null && previousIsResting != state.isResting) {
+        if (state.isResting) {
+          AudioService.playRestAudio();
+        } else {
+          AudioService.playWorkAudio();
+        }
+      }
+
+      previousIsResting = state.isResting;
+      setState(() {
+        isRunning = state.isRunning;
+        isResting = state.isResting;
+        isPaused = state.isPaused;
+        currentRound = state.currentRound;
+        remainingSeconds = state.remainingSeconds;
+      });
     });
   }
 
