@@ -11,7 +11,7 @@ class NotificationService {
   static Future<void> init() async {
     tz.initializeTimeZones();
     const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/reptimer_icon');
 
     const DarwinInitializationSettings iOSSettings =
         DarwinInitializationSettings(
