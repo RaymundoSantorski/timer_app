@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timer/models/timer_session.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 TimerState calculateState(TimerSession session) {
-  DateTime now = DateTime.now();
+  DateTime now = tz.TZDateTime.now(tz.getLocation('America/Mexico_City'));
+  // DateTime now = DateTime.now();
   int workSeconds = session.workSeconds;
   int restSeconds = session.restSeconds;
   int totalRounds = session.totalRounds;
@@ -32,7 +34,8 @@ TimerState calculateState(TimerSession session) {
 }
 
 int calculateElapsed(TimerSession session) {
-  DateTime now = DateTime.now();
+  DateTime now = tz.TZDateTime.now(tz.getLocation('America/Mexico_City'));
+  // DateTime now = DateTime.now();
   int elapsed = now.difference(session.startTime).inSeconds;
   return elapsed;
 }

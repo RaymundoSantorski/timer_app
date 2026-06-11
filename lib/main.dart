@@ -13,6 +13,7 @@ import 'package:vibration/vibration.dart';
 import 'dart:async';
 import 'package:timer/widgets/work_time.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -181,8 +182,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void pauseTimer() {
-    NotificationService.cancelAll();
+  Future<void> pauseTimer() async {
+    await NotificationService.cancelAll();
     if (session != null) {
       timer?.cancel();
       setState(() {
@@ -202,8 +203,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void resetTimer() {
-    NotificationService.cancelAll();
+  Future<void> resetTimer() async {
+    await NotificationService.cancelAll();
     timer?.cancel();
     TimerService.clear();
     previousIsResting = null;
@@ -223,7 +224,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> startTimer() async {
     if (session == null) {
       session = TimerSession(
-        startTime: DateTime.now(),
+        startTime: tz.TZDateTime.now(tz.getLocation('America/Mexico_City')),
+        // startTime: DateTime.now(),
         workSeconds: workSeconds,
         restSeconds: restSeconds,
         totalRounds: totalRounds,
@@ -232,9 +234,12 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     } else if (isPaused) {
       session = TimerSession(
-        startTime: DateTime.now().subtract(
-          Duration(seconds: elapsedBeforePause),
-        ),
+        startTime: tz.TZDateTime.now(
+          tz.getLocation('America/Mexico_City'),
+        ).subtract(Duration(seconds: elapsedBeforePause)),
+        // startTime: DateTime.now().subtract(
+        //   Duration(seconds: elapsedBeforePause),
+        // ),
         workSeconds: session!.workSeconds,
         restSeconds: session!.restSeconds,
         totalRounds: session!.totalRounds,
