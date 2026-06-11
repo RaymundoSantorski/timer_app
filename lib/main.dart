@@ -124,9 +124,9 @@ class _MyHomePageState extends State<MyHomePage> {
       if (savedSession != null) {
         if (savedSession.isPaused) {
           session = TimerSession(
-            startTime: DateTime.now().subtract(
-              Duration(seconds: savedSession.elapsedBeforePause),
-            ),
+            startTime: tz.TZDateTime.now(
+              tz.local,
+            ).subtract(Duration(seconds: savedSession.elapsedBeforePause)),
             workSeconds: savedSession.workSeconds,
             restSeconds: savedSession.restSeconds,
             totalRounds: savedSession.totalRounds,
@@ -224,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> startTimer() async {
     if (session == null) {
       session = TimerSession(
-        startTime: tz.TZDateTime.now(tz.getLocation('America/Mexico_City')),
+        startTime: tz.TZDateTime.now(tz.local),
         // startTime: DateTime.now(),
         workSeconds: workSeconds,
         restSeconds: restSeconds,
@@ -235,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else if (isPaused) {
       session = TimerSession(
         startTime: tz.TZDateTime.now(
-          tz.getLocation('America/Mexico_City'),
+          tz.local,
         ).subtract(Duration(seconds: elapsedBeforePause)),
         // startTime: DateTime.now().subtract(
         //   Duration(seconds: elapsedBeforePause),

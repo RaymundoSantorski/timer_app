@@ -4,15 +4,19 @@ import 'package:timer/models/timer_session.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 TimerState calculateState(TimerSession session) {
-  DateTime now = tz.TZDateTime.now(tz.getLocation('America/Mexico_City'));
-  // DateTime now = DateTime.now();
+  // Usamos tz.local ya que en NotificationService lo fijaste como 'America/Mexico_City'
+  DateTime now = tz.TZDateTime.now(tz.local);
+
   int workSeconds = session.workSeconds;
   int restSeconds = session.restSeconds;
   int totalRounds = session.totalRounds;
   bool isPaused = session.isPaused;
   int elapsedBeforePause = session.elapsedBeforePause;
 
-  int elapsed = now.difference(session.startTime).inSeconds;
+  // Asegurar que comparamos manzanas con manzanas
+  final sessionStartTZ = tz.TZDateTime.from(session.startTime, tz.local);
+  int elapsed = now.difference(sessionStartTZ).inSeconds;
+
   int durationPerRound = workSeconds + restSeconds;
   int currentRound = (elapsed ~/ durationPerRound) + 1;
   int roundElapsed = elapsed % durationPerRound;
@@ -20,6 +24,7 @@ TimerState calculateState(TimerSession session) {
   int remainingSeconds = isResting
       ? durationPerRound - roundElapsed
       : workSeconds - roundElapsed;
+
   return TimerState(
     isRunning: isPaused
         ? false
@@ -34,10 +39,9 @@ TimerState calculateState(TimerSession session) {
 }
 
 int calculateElapsed(TimerSession session) {
-  DateTime now = tz.TZDateTime.now(tz.getLocation('America/Mexico_City'));
-  // DateTime now = DateTime.now();
-  int elapsed = now.difference(session.startTime).inSeconds;
-  return elapsed;
+  DateTime now = tz.TZDateTime.now(tz.local);
+  final sessionStartTZ = tz.TZDateTime.from(session.startTime, tz.local);
+  return now.difference(sessionStartTZ).inSeconds;
 }
 
 class TimerService {

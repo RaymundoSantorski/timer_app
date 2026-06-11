@@ -1,9 +1,10 @@
+import 'package:timezone/timezone.dart' as tz;
+
 class TimerSession {
-  DateTime startTime;
+  DateTime startTime; // Se mantendrá compatible, pero se parseará controlado
   int workSeconds;
   int restSeconds;
   int totalRounds;
-
   bool isPaused;
   int elapsedBeforePause;
 
@@ -28,8 +29,15 @@ class TimerSession {
   }
 
   factory TimerSession.fromJson(Map<String, dynamic> json) {
+    // CLAVE: Forzamos a que el string guardado sea interpretado bajo la locación de la app
+    final parsedUtc = DateTime.parse(json['startTime']).toUtc();
+    final location = tz.getLocation('America/Mexico_City');
+
     return TimerSession(
-      startTime: DateTime.parse(json['startTime']),
+      startTime: tz.TZDateTime.from(
+        parsedUtc,
+        location,
+      ), // <-- Convertido a la zona correcta
       workSeconds: json['workSeconds'],
       restSeconds: json['restSeconds'],
       totalRounds: json['totalRounds'],

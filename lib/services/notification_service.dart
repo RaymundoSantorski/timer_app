@@ -13,7 +13,7 @@ class NotificationService {
     tz.initializeTimeZones();
     // final TimezoneInfo timezoneName = await FlutterTimezone.getLocalTimezone();
 
-    tz.setLocalLocation(tz.getLocation('America/Mexico_City'));
+    tz.setLocalLocation(tz.local);
 
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/reptimer_icon');
@@ -60,11 +60,12 @@ class NotificationService {
   }) async {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-          'timer_channel',
+          'timer_channel_v2',
           'Timer Notifications',
           channelDescription: 'Notifications for workout timer',
           importance: Importance.max,
           priority: Priority.high,
+          ticker: 'ticker',
         );
 
     const DarwinNotificationDetails iOSDetails = DarwinNotificationDetails(
@@ -92,11 +93,12 @@ class NotificationService {
   ) async {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-          'timer_channel',
+          'timer_channel_v2',
           'Timer Notifications',
           channelDescription: 'Notifications for workout timer',
           importance: Importance.max,
           priority: Priority.high,
+          ticker: 'ticker',
         );
 
     const DarwinNotificationDetails iOSDetails = DarwinNotificationDetails(
@@ -176,24 +178,25 @@ class NotificationService {
   static Future<void> scheduleNotifications(
     List<ScheduledNotification> notifications,
   ) async {
-    DateTime now = DateTime.now();
+    // CLAVE: Usar la hora de la zona horaria local configurada, no la del sistema operativo
+    DateTime now = tz.TZDateTime.now(tz.local);
+
     for (ScheduledNotification notification in notifications) {
       if (notification.scheduledTime.isAfter(now)) {
         await scheduleNotification(notification);
-      } else {
-        continue;
       }
     }
   }
 
   static List<ScheduledNotification> buildNotifications(TimerSession session) {
     List<ScheduledNotification> notifications = [];
-    DateTime currentTime = session.startTime;
+    // Aseguramos que la fecha base sea TZDateTime de la zona local
+    DateTime currentTime = tz.TZDateTime.from(session.startTime, tz.local);
     int notificationId = 10000;
+
     for (int round = 1; round <= session.totalRounds; round++) {
       currentTime = currentTime.add(Duration(seconds: session.workSeconds));
       if (round == session.totalRounds) {
-        // If it's the last round, we only need the work notification
         notifications.add(
           ScheduledNotification(
             id: notificationId++,
@@ -204,7 +207,6 @@ class NotificationService {
         );
         break;
       }
-      // Rest notification
       notifications.add(
         ScheduledNotification(
           id: notificationId++,
@@ -213,7 +215,7 @@ class NotificationService {
           scheduledTime: currentTime,
         ),
       );
-      // Work notification
+
       currentTime = currentTime.add(Duration(seconds: session.restSeconds));
       notifications.add(
         ScheduledNotification(
