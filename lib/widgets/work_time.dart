@@ -15,19 +15,19 @@ class WorkTime extends StatelessWidget {
           FittedBox(
             child: Text(
               '${workDuration.inHours.toString().padLeft(2, '0')}:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
             ),
           ),
           FittedBox(
             child: Text(
               '${(workDuration.inMinutes % 60).toString().padLeft(2, '0')}:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
             ),
           ),
           FittedBox(
             child: Text(
               '${(workDuration.inSeconds % 60).toString().padLeft(2, '0')} ',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
             ),
           ),
         ],

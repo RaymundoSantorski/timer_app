@@ -5,6 +5,8 @@ import 'package:timer/models/timer_session.dart';
 import 'package:timer/services/audio_service.dart';
 import 'package:timer/services/notification_service.dart';
 import 'package:timer/services/timer_service.dart';
+import 'package:timer/widgets/round.dart';
+import 'package:timer/widgets/round_controls.dart';
 import 'package:timer/widgets/runninfab.dart';
 import 'package:timer/widgets/set_rest_label.dart';
 import 'package:timer/widgets/stoppedfab.dart';
@@ -14,6 +16,7 @@ import 'dart:async';
 import 'package:timer/widgets/work_time.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:timer/widgets/timer_state.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -341,49 +344,24 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           (isRunning || isPaused)
-              ? Title(
+              ? MyTimerState(
                   key: Key('statusText_$selectorVersion'),
-                  color: Colors.black,
-                  child: Text(
-                    isResting ? 'Rest Time' : 'Work Time',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: isResting
-                          ? ColorScheme.of(context).error
-                          : Colors.lightGreen,
-                    ),
-                  ),
+                  isResting: isResting,
                 )
               : SetRestLabel(
                   restSeconds: restSeconds,
                   onRestChanged: setRestSeconds,
                 ),
           isRunning || isPaused
-              ? Text(
-                  'Round $currentRound of $totalRounds',
+              ? Round(
+                  currentRound: currentRound,
+                  totalRounds: totalRounds,
                   key: Key('roundText_$selectorVersion'),
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                 )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.remove, size: 30),
-                      onPressed: decrementRounds,
-                    ),
-                    Text(
-                      '$totalRounds rounds',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.add, size: 30),
-                      onPressed: incrementRounds,
-                    ),
-                  ],
+              : RoundControls(
+                  decrementRounds: decrementRounds,
+                  totalRounds: totalRounds,
+                  incrementRounds: incrementRounds,
                 ),
           (!isRunning && !isPaused)
               ? TimeSelector(
