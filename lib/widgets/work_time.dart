@@ -27,7 +27,16 @@ class WorkTime extends StatelessWidget {
           FittedBox(
             child: Text(
               '${(workDuration.inSeconds % 60).toString().padLeft(2, '0')} ',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: workSeconds == 1
+                    ? 60
+                    : workSeconds == 2
+                    ? 56
+                    : workSeconds == 3
+                    ? 52
+                    : 48,
+              ),
             ),
           ),
         ],

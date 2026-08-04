@@ -160,7 +160,7 @@ class NotificationService {
       id: 1,
       title: 'N2',
       body: '15 seconds',
-      scheduledDate: n1,
+      scheduledDate: n2,
       notificationDetails: details,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
@@ -168,11 +168,10 @@ class NotificationService {
       id: 02,
       title: 'N3',
       body: '20 seconds',
-      scheduledDate: n1,
+      scheduledDate: n3,
       notificationDetails: details,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
-    print('Tested');
   }
 
   static Future<void> scheduleNotifications(
@@ -236,7 +235,5 @@ class NotificationService {
 
   static Future<void> cancelAll() async {
     await notificationsPlugin.cancelAll();
-
-    final pending = await notificationsPlugin.pendingNotificationRequests();
   }
 }

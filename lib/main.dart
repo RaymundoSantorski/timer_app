@@ -5,10 +5,14 @@ import 'package:timer/models/timer_session.dart';
 import 'package:timer/services/audio_service.dart';
 import 'package:timer/services/notification_service.dart';
 import 'package:timer/services/timer_service.dart';
+import 'package:timer/widgets/active_timer.dart';
+import 'package:timer/widgets/circle.dart';
+import 'package:timer/widgets/circular_timer.dart';
 import 'package:timer/widgets/round.dart';
 import 'package:timer/widgets/round_controls.dart';
 import 'package:timer/widgets/runninfab.dart';
 import 'package:timer/widgets/set_rest_label.dart';
+import 'package:timer/widgets/set_timer.dart';
 import 'package:timer/widgets/stoppedfab.dart';
 import 'package:timer/widgets/time_selector.dart';
 import 'package:vibration/vibration.dart';
@@ -344,36 +348,26 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           (isRunning || isPaused)
-              ? MyTimerState(
-                  key: Key('statusText_$selectorVersion'),
+              ? ActiveTimer(
                   isResting: isResting,
+                  currentRound: currentRound,
+                  progress:
+                      remainingSeconds /
+                      (isResting ? restSeconds : workSeconds),
+                  remainingSeconds: remainingSeconds,
+                  totalRounds: totalRounds,
+                  key: Key('active_timer_$selectorVersion'),
                 )
-              : SetRestLabel(
+              : SetTimer(
                   restSeconds: restSeconds,
                   onRestChanged: setRestSeconds,
-                ),
-          isRunning || isPaused
-              ? Round(
-                  currentRound: currentRound,
-                  totalRounds: totalRounds,
-                  key: Key('roundText_$selectorVersion'),
-                )
-              : RoundControls(
                   decrementRounds: decrementRounds,
                   totalRounds: totalRounds,
                   incrementRounds: incrementRounds,
-                ),
-          (!isRunning && !isPaused)
-              ? TimeSelector(
-                  key: Key('$selectorVersion'),
-                  onValueChanged: setWorkSeconds,
                   initialSeconds: workSeconds,
-                )
-              : WorkTime(
-                  workSeconds: remainingSeconds,
-                  key: Key('workTime_$selectorVersion'),
+                  onValueChanged: setWorkSeconds,
                 ),
-          SizedBox(height: 100),
+          SizedBox(height: 200),
         ],
       ),
     );
